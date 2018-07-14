@@ -33,4 +33,8 @@ function handleError(error) {
 
 navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
 
+setInterval(function(){ 
+    takeAPicture();
+}, 5000);
+
 </script>
