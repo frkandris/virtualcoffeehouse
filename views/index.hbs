@@ -1,6 +1,6 @@
 <button id="screenshot-button">Take a picture</button>
-<video id="screenshot-video" autoplay></video>
-<canvas id="canvas" style="display:none"></canvas>
+<video id="screenshot-video" autoplay style="display:none;"></video>
+<canvas id="canvas" style="display:none;"></canvas>
 <img id="screenshot-img" src="">
 
 <script>
@@ -8,7 +8,6 @@
 const button = document.querySelector('#screenshot-button');
 const img = document.querySelector('#screenshot-img');
 const video = document.querySelector('#screenshot-video');
-
 const canvas = document.querySelector('canvas');
 
 button.onclick = video.onclick = function() {
@@ -16,14 +15,27 @@ button.onclick = video.onclick = function() {
 };
 
 function takeAPicture() {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
 
-    var data = canvas.toDataURL('image/png');
-    img.src = data;
+    // show video, hide picture
+    video.style.display = "block";
+    img.style.display = "none";
 
-    uploadPicture(data);
+    // allow the "video is running" state for 3 seconds
+    setTimeout(function() { 
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+
+        var data = canvas.toDataURL('image/png');
+        img.src = data;
+
+        uploadPicture(data);
+
+        // hide video, show picture
+        video.style.display = "none";
+        img.style.display = "block";
+    }, 3000);
 }
 
 const constraints = {video: true};
@@ -40,7 +52,7 @@ navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handl
 
 setInterval(function(){ 
     takeAPicture();
-}, 5000);
+}, 30000);
 
 function uploadPicture(data){
 
