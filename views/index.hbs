@@ -1,6 +1,7 @@
-<video id="screenshot-video" autoplay></video>
-<img id="screenshot-img" src="">
 <button id="screenshot-button">Take a picture</button>
+<video id="screenshot-video" autoplay></video>
+<canvas id="canvas" style="display:none"></canvas>
+<img id="screenshot-img" src="">
 
 <script>
 
@@ -8,7 +9,7 @@ const button = document.querySelector('#screenshot-button');
 const img = document.querySelector('#screenshot-img');
 const video = document.querySelector('#screenshot-video');
 
-const canvas = document.createElement('canvas');
+const canvas = document.querySelector('canvas');
 
 button.onclick = video.onclick = function() {
     takeAPicture();
@@ -18,7 +19,11 @@ function takeAPicture() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0);
-    img.src = canvas.toDataURL('image/webp');
+
+    var data = canvas.toDataURL('image/png');
+    img.src = data;
+
+    uploadPicture(data);
 }
 
 const constraints = {video: true};
@@ -36,5 +41,19 @@ navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handl
 setInterval(function(){ 
     takeAPicture();
 }, 5000);
+
+function uploadPicture(data){
+
+    // send the data to the server
+    $.ajax({
+        url: '/save/',
+        type: 'POST', 
+        data: {
+            imgBase64: data
+        }
+    }).done(function(o) {
+        // console.log("picture saved.");
+    });
+}
 
 </script>
