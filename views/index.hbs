@@ -1,2 +1,36 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<video id="screenshot-video" autoplay></video>
+<img id="screenshot-img" src="">
+<button id="screenshot-button">Take a picture</button>
+
+<script>
+
+const button = document.querySelector('#screenshot-button');
+const img = document.querySelector('#screenshot-img');
+const video = document.querySelector('#screenshot-video');
+
+const canvas = document.createElement('canvas');
+
+button.onclick = video.onclick = function() {
+    takeAPicture();
+};
+
+function takeAPicture() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    img.src = canvas.toDataURL('image/webp');
+}
+
+const constraints = {video: true};
+
+function handleSuccess(stream) {
+video.srcObject = stream;
+}
+
+function handleError(error) {
+  console.error('navigator.getUserMedia error: ', error);
+}
+
+navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
+
+</script>
