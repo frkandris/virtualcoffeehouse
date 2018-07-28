@@ -5,16 +5,28 @@ var fs = require('fs');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+
+  var filesAll = fs.readdirSync('./public/content/');
+  var files = [];
+  filesAll.forEach(function(element) {
+    if ( element.endsWith('.png') & (!isNaN(element.substring(0,5)))) {
+      files.push(element);
+    };
+  });
+
+  res.render('index', { files: files });
 });
 
 /* POST save an image. */
 router.post('/save/', function(req, res, next) {
-    
+
   var dir = './public/content/';
   if (!fs.existsSync(dir)) {
     fs.mkdir(dir, err => {})
   }
+
+  // FIXME validate userID
+  var filename = req.body.userID + '.png';
 
   var data_url = req.body.imgBase64;
   var matches = data_url.match(/^data:.+\/(.+);base64,(.*)$/);
@@ -22,7 +34,7 @@ router.post('/save/', function(req, res, next) {
   var base64_data = matches[2];
   var buffer = new Buffer(base64_data, 'base64');
 
-  fs.writeFileSync(dir + '/photo.png', buffer, 'binary');
+  fs.writeFileSync(dir + filename, buffer, 'binary');
 
   res.end();
 

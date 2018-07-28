@@ -9,6 +9,22 @@
 
 <script>
 
+// user related stuff begins
+
+if (localStorage.userID) {
+    userID = localStorage.userID;
+} else {
+    var max = 999999;
+    var min = 100000;
+    userID = Math.floor(Math.random()*(max-min+1)+min);
+    localStorage.userID = userID;
+}
+
+// user related stuff ends
+
+
+// picture related stuff begins
+
 const button = document.querySelector('#screenshot-button');
 const image = document.querySelector('#image');
 const video = document.querySelector('#video');
@@ -76,11 +92,30 @@ function uploadPicture(data){
         url: '/save/',
         type: 'POST', 
         data: {
-            imgBase64: data
+            imgBase64: data,
+            userID: userID
         }
     }).done(function(o) {
         // console.log("picture saved.");
     });
 }
 
+// picture related stuff ends
+
+
+// reloads page every 60 seconds
+
+setTimeout(function(){
+   window.location.reload(1);
+}, 60000);
+
+
 </script>
+
+{{!-- start displaying pictures --}}
+
+{{#each files}}
+    <span><img src="/content/{{this}}"/></span>
+{{/each}}
+
+{{!-- end displaying pictures --}}
